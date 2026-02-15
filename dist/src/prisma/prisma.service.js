@@ -14,11 +14,21 @@ const common_1 = require("@nestjs/common");
 const client_1 = require("@prisma/client");
 const adapter_better_sqlite3_1 = require("@prisma/adapter-better-sqlite3");
 const path_1 = require("path");
+const adapter_pg_1 = require("@prisma/adapter-pg");
+const pg_1 = require("pg");
 let PrismaService = class PrismaService extends client_1.PrismaClient {
     constructor() {
-        const dbPath = (0, path_1.join)(process.cwd(), 'dev.db');
-        console.log('📂 Database path:', dbPath);
-        const adapter = new adapter_better_sqlite3_1.PrismaBetterSqlite3({ url: dbPath });
+        let adapter;
+        if (process.env.DATABASE_URL && process.env.DATABASE_URL.startsWith('postgres')) {
+            console.log('📂 Using PostgreSQL adapter');
+            const pool = new pg_1.Pool({ connectionString: process.env.DATABASE_URL });
+            adapter = new adapter_pg_1.PrismaPg(pool);
+        }
+        else {
+            const dbPath = (0, path_1.join)(process.cwd(), 'dev.db');
+            console.log('📂 Using SQLite adapter. Database path:', dbPath);
+            adapter = new adapter_better_sqlite3_1.PrismaBetterSqlite3({ url: dbPath });
+        }
         super({ adapter });
     }
     async onModuleInit() {
