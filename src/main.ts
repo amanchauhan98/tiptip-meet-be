@@ -14,7 +14,8 @@ async function bootstrap() {
   const origins = [
     ...allowedOrigins,
     'http://localhost:3000',
-    'http://localhost:5173', // Vite default port
+    'http://localhost:5173', // Vite default port (http)
+    'https://localhost:5173', // Vite default port (https)
   ];
 
   console.log('✅ Allowed CORS Origins:', origins);

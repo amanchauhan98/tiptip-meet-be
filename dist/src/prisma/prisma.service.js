@@ -25,6 +25,9 @@ let PrismaService = class PrismaService extends client_1.PrismaClient {
             adapter = new adapter_pg_1.PrismaPg(pool);
         }
         else {
+            if (process.env.NODE_ENV === 'production') {
+                console.error('❌ ERROR: DATABASE_URL is missing or invalid in production! The app expects PostgreSQL but is falling back to SQLite, which will crash.');
+            }
             const dbPath = (0, path_1.join)(process.cwd(), 'dev.db');
             console.log('📂 Using SQLite adapter. Database path:', dbPath);
             adapter = new adapter_better_sqlite3_1.PrismaBetterSqlite3({ url: dbPath });
